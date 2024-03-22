@@ -76,7 +76,7 @@ let PivotTableCompBase = (function () {
   const childrenMap = {
     styles: styleControl(CompStyles),
     autoHeight: withDefault(AutoHeightControl, "auto"),
-    data: jsonControl(toJSONArray, i18nObjs),
+    data: jsonControl(toJSONArray, i18nObjs.defaultData),
     onEvent: eventHandlerControl([
       {
         label: "onChange",
