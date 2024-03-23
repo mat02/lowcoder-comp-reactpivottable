@@ -1,21 +1,26 @@
 {
   "name": "lowcoder-comp-reactpivottable",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "type": "module",
   "license": "MIT",
   "dependencies": {
+    "@dnd-kit/core": "^6.0.5",
+    "@dnd-kit/sortable": "^7.0.1",
+    "@dnd-kit/utilities": "^3.2.0",
+    "@imc-trading/react-pivottable": "^0.2.13",
     "@observablehq/runtime": "^5.9.7",
     "@types/react": "18",
     "@types/react-dom": "18",
+    "immutability-helper": "^3.1.1",
     "lowcoder-cli": "^0.0.30",
     "lowcoder-sdk": "^2.3.4",
-    "plotly.js": "^2.30.1",
+    "plotly.js": ">1.34.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-pivottable": "^0.11.0",
     "react-plotly.js": "^2.6.0",
     "react-resize-detector": "^10.0.1",
+    "rollup": "^2.25.0 || ^3.3.0",
     "typescript": "^5.4.2",
     "vite": "^5.1.6"
   },
@@ -25,7 +30,8 @@
       "pivottable": {
         "name": "React-PivotTable",
         "icon": "./icons/react-pivottable.png",
-        "description": "React-PivotTable Component Plugi",
+        "description": "React-PivotTable Component Plugin",
+        "category": "dashboards",
         "layoutInfo": {
           "w": 22,
           "h": 70
@@ -37,8 +43,5 @@
     "start": "vite",
     "build": "lowcoder-cli build",
     "build_publish": "lowcoder-cli build --publish"
-  },
-  "devDependencies": {
-    "@types/react-pivottable": "^0.11.6"
   }
 }

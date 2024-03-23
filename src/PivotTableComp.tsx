@@ -20,17 +20,19 @@ import styles from "./styles.module.css";
 
 import { i18nObjs, trans } from "./i18n/comps";
 
-// import exampleData from "./example"
-
-import PivotTableUI from 'react-pivottable/PivotTableUI';
-import 'react-pivottable/pivottable.css';
-import TableRenderers from 'react-pivottable/TableRenderers';
-import Plot from 'react-plotly.js';
-import createPlotlyRenderers from 'react-pivottable/PlotlyRenderers';
-
-const PlotlyRenderers = createPlotlyRenderers(Plot);
-
 import { useState, useEffect } from "react";
+
+import Plotly from "react-plotly.js";
+
+import {
+  PivotTableUI,
+  createPlotlyRenderers,
+  TableRenderers,
+} from "@imc-trading/react-pivottable";
+
+import "@imc-trading/react-pivottable/pivottable.css";
+
+const PlotlyRenderers = createPlotlyRenderers(Plotly); // or createPlotlyRenderers(window.Plotly)
 
 
 export const CompStyles = [
@@ -147,13 +149,13 @@ let PivotTableCompBase = (function () {
       fontSize: `${props.styles.textSize}`,
     }}>
       <div style={{
+        maxWidth: `${dimensions.width}px`,
+        overflow: `auto`,
         ...(  props.autoHeight ?
             {} : {
-                  maxWidth: `${dimensions.width}px`,
                   maxHeight: `${dimensions.height}px`,
-                  minHeight: `450px`,
-                  overflow: `auto`,
-                })}}>
+                })}}
+        className={styles.pvtWrapper}>
       <PivotTableUI
           data={props.data}
           onChange={s => {

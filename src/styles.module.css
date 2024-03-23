@@ -7,3 +7,7 @@
   border: 1px solid #dddddd;
   background-color: white;
 }
+
+.pvtWrapper::-webkit-scrollbar {
+  display: initial;
+}
