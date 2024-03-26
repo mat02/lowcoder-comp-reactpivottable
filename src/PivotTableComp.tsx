@@ -1,4 +1,5 @@
 import {
+  Dropdown,
   UICompBuilder,
   NameConfig,
   NumberControl,
@@ -6,6 +7,7 @@ import {
   withDefault,
   withExposingConfigs,
   withMethodExposing,
+  dropdownControl,
   eventHandlerControl,
   styleControl,
   toJSONArray,
@@ -14,11 +16,16 @@ import {
   AutoHeightControl,
   EditorContext,
 } from "lowcoder-sdk";
+
+import { isEmpty } from 'lodash';
+
 import { useResizeDetector } from "react-resize-detector";
 
 import styles from "./styles.module.css";
 
 import { i18nObjs, trans } from "./i18n/comps";
+
+import { RendererNameOptions, AggregatorNameOptions } from "./Constants";
 
 import { useState, useEffect } from "react";
 
@@ -79,6 +86,11 @@ let PivotTableCompBase = (function () {
     styles: styleControl(CompStyles),
     autoHeight: withDefault(AutoHeightControl, "auto"),
     data: jsonControl(toJSONArray, i18nObjs.defaultData),
+    rendererName: dropdownControl(RendererNameOptions, 'Table'),
+    aggregatorName: dropdownControl(AggregatorNameOptions, 'Count'),
+    cols: jsonControl(toJSONArray, []),
+    rows: jsonControl(toJSONArray, []),
+    vals: jsonControl(toJSONArray, []),
     onEvent: eventHandlerControl([
       {
         label: "onChange",
@@ -92,6 +104,11 @@ let PivotTableCompBase = (function () {
     onEvent: any;
     styles: { backgroundColor: any; border: any; radius: any; borderWidth: any; margin: any; padding: any; textSize: any; };
     data: any[] | null | undefined;
+    rendererName: any;
+    aggregatorName: any;
+    cols: any;
+    rows: any;
+    vals: any;
     autoHeight: boolean;
   }) => {
 
@@ -120,19 +137,49 @@ let PivotTableCompBase = (function () {
   }});
 
   const [pivotState, setPivotState] = useState({});
-  useEffect(() => {
-    setPivotState({
-      data: props.data
-    })
-  }, [props.data]);
-
   const [plotlyOptions, setPlotlyOptions] = useState({
     width: 450
   });
+
+  useEffect(() => {
+    setPivotState({
+      data: props.data,
+      rendererName: pivotState.rendererName || props.rendererName,
+      aggregatorName: pivotState.aggregatorName || props.aggregatorName,
+      cols: isEmpty(pivotState.cols) ? props.cols :  pivotState.cols,
+      rows: isEmpty(pivotState.rows) ? props.rows :  pivotState.rows,
+      vals: isEmpty(pivotState.vals) ? props.vals :  pivotState.vals,
+    })
+  }, [props.data]);
+
+  useEffect(() => {
+    setPivotState({
+      ...pivotState,
+      rendererName: props.rendererName,
+      aggregatorName: props.aggregatorName,
+      cols: props.cols,
+      rows: props.rows,
+      vals: props.vals,
+    })
+  }, [
+    props.rendererName,
+    props.aggregatorName,
+    props.cols,
+    props.rows,
+    props.vals,
+  ]);
   
   useEffect(() => {
+    console.log(conRef.current);
+    let outWidth = dimensions.width;
+    if (conRef.current) {
+      const outputElements = conRef.current.getElementsByClassName('pvtOutput');
+      if (!isEmpty(outputElements)) {
+        outWidth = outputElements[0].clientWidth;
+      }
+    }
     setPlotlyOptions({
-      width: dimensions.width - 300,
+      width: outWidth,
     })
   }, [dimensions])
 
@@ -147,6 +194,7 @@ let PivotTableCompBase = (function () {
       margin: `${props.styles.margin}`,
       padding: `${props.styles.padding}`,
       fontSize: `${props.styles.textSize}`,
+      justifyContent: 'flex-start',
     }}>
       <div style={{
         maxWidth: `${dimensions.width}px`,
@@ -175,6 +223,25 @@ let PivotTableCompBase = (function () {
     <>
       <Section name="Basic">
         {children.data.propertyView({ label: "Data" })}
+        <Dropdown
+          value={children.rendererName.getView()}
+          options={RendererNameOptions}
+          label="Renderer"
+          onChange={(value) => {
+            children.rendererName.dispatchChangeValueAction(value);
+          }}
+        />
+        <Dropdown
+          value={children.aggregatorName.getView()}
+          options={AggregatorNameOptions}
+          label="Aggregator"
+          onChange={(value) => {
+            children.aggregatorName.dispatchChangeValueAction(value);
+          }}
+        />
+        {children.cols.propertyView({ label: "Columns" })}
+        {children.rows.propertyView({ label: "Rows" })}
+        {children.vals.propertyView({ label: "Values" })}
       </Section>
       <Section name="Interaction">
         {children.onEvent.propertyView()}
