@@ -9,6 +9,7 @@
     "@dnd-kit/utilities": "^3.2.0",
     "@imc-trading/react-pivottable": "^0.2.13",
     "@observablehq/runtime": "^5.9.7",
+    "@types/lodash": "^4.17.0",
     "@types/react": "18",
     "@types/react-dom": "18",
     "immutability-helper": "^3.1.1",

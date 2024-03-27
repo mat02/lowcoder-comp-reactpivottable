@@ -12,6 +12,7 @@ import {
   styleControl,
   toJSONArray,
   toJSONObjectArray,
+  BoolControl,
   jsonControl,
   AutoHeightControl,
   EditorContext,
@@ -33,6 +34,7 @@ import Plotly from "react-plotly.js";
 
 import {
   PivotTableUI,
+  PivotTable,
   createPlotlyRenderers,
   TableRenderers,
 } from "@imc-trading/react-pivottable";
@@ -91,6 +93,10 @@ let PivotTableCompBase = (function () {
     cols: jsonControl(toJSONArray, []),
     rows: jsonControl(toJSONArray, []),
     vals: jsonControl(toJSONArray, []),
+    hiddenAttributes: jsonControl(toJSONArray, []),
+    hiddenFromAggregators: jsonControl(toJSONArray, []),
+    hiddenFromDragDrop: jsonControl(toJSONArray, []),
+    readOnly: withDefault(BoolControl, false),
     onEvent: eventHandlerControl([
       {
         label: "onChange",
@@ -109,6 +115,10 @@ let PivotTableCompBase = (function () {
     cols: any;
     rows: any;
     vals: any;
+    hiddenAttributes: any;
+    hiddenFromAggregators: any;
+    hiddenFromDragDrop: any;
+    readOnly: any;
     autoHeight: boolean;
   }) => {
 
@@ -149,7 +159,10 @@ let PivotTableCompBase = (function () {
       cols: isEmpty(pivotState.cols) ? props.cols :  pivotState.cols,
       rows: isEmpty(pivotState.rows) ? props.rows :  pivotState.rows,
       vals: isEmpty(pivotState.vals) ? props.vals :  pivotState.vals,
-    })
+      hiddenAttributes: isEmpty(pivotState.hiddenAttributes) ? props.hiddenAttributes :  pivotState.hiddenAttributes,
+      hiddenFromAggregators: isEmpty(pivotState.hiddenFromAggregators) ? props.hiddenFromAggregators :  pivotState.hiddenFromAggregators,
+      hiddenFromDragDrop: isEmpty(pivotState.hiddenFromDragDrop) ? props.hiddenFromDragDrop :  pivotState.hiddenFromDragDrop,
+    });
   }, [props.data]);
 
   useEffect(() => {
@@ -160,6 +173,9 @@ let PivotTableCompBase = (function () {
       cols: props.cols,
       rows: props.rows,
       vals: props.vals,
+      hiddenAttributes: props.hiddenAttributes,
+      hiddenFromAggregators: props.hiddenFromAggregators,
+      hiddenFromDragDrop: props.hiddenFromDragDrop,
     })
   }, [
     props.rendererName,
@@ -167,15 +183,21 @@ let PivotTableCompBase = (function () {
     props.cols,
     props.rows,
     props.vals,
+    props.hiddenAttributes,
+    props.hiddenFromAggregators,
+    props.hiddenFromDragDrop,
   ]);
   
   useEffect(() => {
-    console.log(conRef.current);
     let outWidth = dimensions.width;
     if (conRef.current) {
-      const outputElements = conRef.current.getElementsByClassName('pvtOutput');
+      let outputElements = conRef.current.getElementsByClassName('pvtRenderers');
       if (!isEmpty(outputElements)) {
-        outWidth = outputElements[0].clientWidth;
+        outWidth -= outputElements[0].clientWidth;
+      }
+      outputElements = conRef.current.getElementsByClassName('pvtVals');
+      if (!isEmpty(outputElements)) {
+        outWidth -= outputElements[0].clientWidth;
       }
     }
     setPlotlyOptions({
@@ -204,16 +226,29 @@ let PivotTableCompBase = (function () {
                   maxHeight: `${dimensions.height}px`,
                 })}}
         className={styles.pvtWrapper}>
-      <PivotTableUI
-          data={props.data}
-          onChange={s => {
-            setPivotState(s);
-            props.onEvent("change");
-          }}
-          renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
-          plotlyOptions={plotlyOptions}
-          {...pivotState}
-      />
+      { props.readOnly ? 
+        <PivotTable
+            data={props.data}
+            onChange={s => {
+              setPivotState(s);
+              props.onEvent("change");
+            }}
+            renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
+            plotlyOptions={plotlyOptions}
+            {...pivotState}
+        />
+      :
+        <PivotTableUI
+            data={props.data}
+            onChange={s => {
+              setPivotState(s);
+              props.onEvent("change");
+            }}
+            renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
+            plotlyOptions={plotlyOptions}
+            {...pivotState}
+        />
+      }
       </div>
     </div>
   );
@@ -242,6 +277,10 @@ let PivotTableCompBase = (function () {
         {children.cols.propertyView({ label: "Columns" })}
         {children.rows.propertyView({ label: "Rows" })}
         {children.vals.propertyView({ label: "Values" })}
+        {children.hiddenAttributes.propertyView({ label: "Hidden attributes" })}
+        {children.hiddenFromAggregators.propertyView({ label: "Hidden from aggregators" })}
+        {children.hiddenFromDragDrop.propertyView({ label: "Hidden from drag & drop" })}
+        {children.readOnly.propertyView({ label: "Read only" })}
       </Section>
       <Section name="Interaction">
         {children.onEvent.propertyView()}
