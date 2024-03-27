@@ -71,16 +71,16 @@ export const RendererNameOptions = [
         value: "Count Unique Values",
     },
     {
-        label: "Count as Fraction Of Columns",
-        value: "Count as Fraction Of Columns",
+        label: "Count as Fraction of Columns",
+        value: "Count as Fraction of Columns",
     },
     {
-        label: "Count as Fraction Of Rows",
-        value: "Count as Fraction Of Rows",
+        label: "Count as Fraction of Rows",
+        value: "Count as Fraction of Rows",
     },
     {
-        label: "Count as Fraction Of Total",
-        value: "Count as Fraction Of Total",
+        label: "Count as Fraction of Total",
+        value: "Count as Fraction of Total",
     },
     {
         label: "First",
@@ -123,12 +123,12 @@ export const RendererNameOptions = [
         value: "Sum",
     },
     {
-        label: "Sum as Fraction Of Columns",
-        value: "Sum as Fraction Of Columns",
+        label: "Sum as Fraction of Columns",
+        value: "Sum as Fraction of Columns",
     },
     {
-        label: "Sum as Fraction Of Rows",
-        value: "Sum as Fraction Of Rows",
+        label: "Sum as Fraction of Rows",
+        value: "Sum as Fraction of Rows",
     },
     {
         label: "Sum as Fraction of Total",
