@@ -8,6 +8,7 @@ import {
   withExposingConfigs,
   withMethodExposing,
   dropdownControl,
+  dropdownInputSimpleControl,
   eventHandlerControl,
   styleControl,
   toJSONArray,
@@ -301,37 +302,24 @@ PivotTableCompBase = class extends PivotTableCompBase {
   }
 };
 
-// PivotTableCompBase = withMethodExposing(PivotTableCompBase, [
-//   {
-//     method: {
-//       name: "setPoint",
-//       description: trans("methods.setPoint"),
-//       params: [{
-//         name: "data",
-//         type: "JSON",
-//         description: "JSON value"
-//       }],
-//     },
-//     execute: (comp: any, values: any[]) => {
-//       const point = values[0] as Point;
-//       if(typeof point !== 'object') {
-//         return Promise.reject(trans("methods.invalidInput"))
-//       }
-//       if(!point.id) {
-//         return Promise.reject(trans("methods.requiredField", { field: 'ID' }));
-//       }
-//       if(!point.x) {
-//         return Promise.reject(trans("methods.requiredField", { field: 'X position' }));
-//       }
-//       const data = comp.children.data.getView(); 
-//       const newData = [
-//         ...data,
-//         point,
-//       ];
-//       comp.children.data.dispatchChangeValueAction(JSON.stringify(newData, null, 2));
-//     }
-//   },
-// ]);
+PivotTableCompBase = withMethodExposing(PivotTableCompBase, [
+  {
+    method: {
+      name: "setRenderer",
+      description: "Set current Renderer",
+      params: [{
+        name: "newRenderer",
+        type: "string",
+        description: "Name of the renderer to be used"
+      }],
+    },
+    execute: (comp: any, values: any[]) => {
+      const newRendererName = values[0] as string;
+      const rendererName = comp.children.rendererName.getView();
+      comp.children.rendererName.dispatchChangeValueAction(newRendererName);
+    }
+  },
+]);
 
 export default withExposingConfigs(PivotTableCompBase, [
   new NameConfig("data", trans("component.data")),
